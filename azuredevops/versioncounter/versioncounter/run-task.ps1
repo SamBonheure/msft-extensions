@@ -39,9 +39,9 @@ if ($buildDef) {
     Write-Host "Trying to retrieve the build definition with the url: $($defUri)."
     $definition = Invoke-RestMethod -Method Get -Uri $defUri -Headers $devOpsHeader -ContentType "application/json"
 
-    if ($definition.variables.$VersionVariable) {
-        Write-Host "Value of the Major Version Variable: $($definition.variables.$VersionVariable.Value)"
-        $version = $definition.variables.$VersionVariable.Value
+    if ($definition.variableGroups[0].variables.$VersionVariable) {
+        Write-Host "Value of the Major Version Variable: $($definition.variableGroups[0].variables.$VersionVariable.Value)"
+        $version = $definition.variableGroups[0].variables.$VersionVariable.Value
 
         if (!$version) {
             $version = "1.0.0"
@@ -87,7 +87,7 @@ if ($buildDef) {
             Write-Host "Updating patch version number from: $($patchVersion) to $($updatedPatchVersion)."
             Write-Host "Updating minor version number from: $($minorVersion) to $($updatedMinorVersion)."
             Write-Host "Updating major version number from: $($majorVersion) to $($updatedMajorVersion)."
-            $definition.variables.$VersionVariable.Value = "$($updatedMajorVersion).$($updatedMinorVersion).$($updatedPatchVersion)"
+            $definition.variableGroups[0].variables.$VersionVariable.Value = "$($updatedMajorVersion).$($updatedMinorVersion).$($updatedPatchVersion)"
 
             $definitionJson = $definition | ConvertTo-Json -Depth 50 -Compress
 
